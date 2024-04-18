@@ -1,5 +1,5 @@
-taurus_imu\bsp_dwt.o: D:\RM-开源\RoboMaster-C-Board-INS-Example-master\Bsp\bsp_dwt.c
-taurus_imu\bsp_dwt.o: D:\RM-开源\RoboMaster-C-Board-INS-Example-master\Bsp\bsp_dwt.h
+taurus_imu\bsp_dwt.o: ..\bsp\bsp_dwt.c
+taurus_imu\bsp_dwt.o: ..\bsp\bsp_dwt.h
 taurus_imu\bsp_dwt.o: ../Inc/main.h
 taurus_imu\bsp_dwt.o: ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal.h
 taurus_imu\bsp_dwt.o: ../Inc/stm32f3xx_hal_conf.h

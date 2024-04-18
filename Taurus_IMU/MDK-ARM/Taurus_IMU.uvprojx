@@ -608,12 +608,7 @@
             <File>
               <FileName>bsp_dwt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>D:\RM-开源\RoboMaster-C-Board-INS-Example-master\Bsp\bsp_dwt.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_dwt.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>D:\RM-开源\RoboMaster-C-Board-INS-Example-master\Bsp\bsp_dwt.h</FilePath>
+              <FilePath>..\bsp\bsp_dwt.c</FilePath>
             </File>
           </Files>
         </Group>

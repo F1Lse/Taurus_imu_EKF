@@ -221,10 +221,10 @@ void IMU_AHRS_Calcu_task(void){
 
   
    
-    const float gravity[3] = {0, 0, 9.7833f};
-		dt = DWT_GetDeltaT(&INS_DWT_Count);
-		
-    t += dt;
+				const float gravity[3] = {0, 0, 9.7833f};
+				dt = DWT_GetDeltaT(&INS_DWT_Count);
+				
+				t += dt;
 
 
     
