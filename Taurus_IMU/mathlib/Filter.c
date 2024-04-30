@@ -54,34 +54,22 @@ void BMI088_Filter(void)
 	gyro_filter.Y=LPButterworth(gyro_filter_bug.Y,&gyro_filter_buf_bug[1],&Gyro_Parameter);
 	gyro_filter.Z=LPButterworth(gyro_filter_bug.Z,&gyro_filter_buf_bug[2],&Gyro_Parameter);		//滤波后Gyro数据
    if(fabs(Temperature-calibration_temperature)>2)
-	    Bias.Gyro.Z =Bias.Gyro.init_z +(Temperature-calibration_temperature)*0.015*16.384f;
+	    Bias.Gyro.Z =Bias.Gyro.init_z +(Temperature-calibration_temperature)*0.015f*16.384f;
 	 else
 		   Bias.Gyro.Z = Bias.Gyro.init_z;
 	Bias.Gyro.Z =Bias.Gyro.init_z;
 	imu_output_data.Gyro.X = gyro_filter.X - Bias.Gyro.X;
 	imu_output_data.Gyro.Y = gyro_filter.Y - Bias.Gyro.Y;
 	imu_output_data.Gyro.Z = gyro_filter.Z - Bias.Gyro.Z;			 //输出值等于滤波后值减去零偏值
-	
-//	imu_output_data.Gyro.X = imu_org_data.Gyro.X - Bias.Gyro.X;
-//	imu_output_data.Gyro.Y = imu_org_data.Gyro.Y - Bias.Gyro.Y;
-//	imu_output_data.Gyro.Z = imu_org_data.Gyro.Z - Bias.Gyro.Z;			 //输出值等于滤波后值减去零偏值
-	
-	
-//	imu_output_data.Gyro.Z= (imu_org_data.Gyro.Z)/16.384f+0.039+0.000363;
-// 	imu_org_data.Gyro.Z =Kalman1Filter_calc(&kalman_gyro_z_stop,imu_org_data.Gyro.Z);
+
 	accel_filter.X=LPButterworth(imu_org_data.Accel.X,&accel_filter_buf[0],&Accel_Parameter);
 	accel_filter.Y=LPButterworth(imu_org_data.Accel.Y,&accel_filter_buf[1],&Accel_Parameter);
 	accel_filter.Z=LPButterworth(imu_org_data.Accel.Z,&accel_filter_buf[2],&Accel_Parameter);
-	
-//	imu_output_data.Accel.X = accel_filter.X - Bias.Accel.X;
-//	imu_output_data.Accel.Y = accel_filter.Y - Bias.Accel.Y;
-//	imu_output_data.Accel.Z = accel_filter.Z - Bias.Accel.Z;		//输出值等于滤波后值减去零偏值
+
    	imu_output_data.Accel.X = accel_filter.X;
 	  imu_output_data.Accel.Y = accel_filter.Y;
 	  imu_output_data.Accel.Z = accel_filter.Z;	
-//    imu_output_data.Accel.X =imu_org_data.Accel.X;
-//	  imu_output_data.Accel.Y = imu_org_data.Accel.Y;
-//	  imu_output_data.Accel.Z = imu_org_data.Accel.Z;	
+
 }
 
 /***************************************************************/

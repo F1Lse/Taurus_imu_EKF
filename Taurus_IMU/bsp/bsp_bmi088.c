@@ -45,8 +45,8 @@ uint8_t BMI088_Init(void)
 		//{ACC_CONF,					0x9c}, //设置数据输出速率1600HZ
 		//{ACC_CONF,					0x87}, //设置数据输出速率800HZ
 		{ACC_CONF,					0xA7}, //设置ODR=1.6kHz、连续采样模式、“正常模式”(norm_avg4)
-		{ACC_RANGE,					0x03}, //设置量程为+-3g；低通滤波器234HZ
-		 //{ACC_RANGE,					0x00}, //设置量程为+-3g；低通滤波器234HZ
+//		{ACC_RANGE,					0x03}, //设置量程为+-3g；低通滤波器234HZ
+		{ACC_RANGE,					0x00}, //设置量程为+-3g；低通滤波器234HZ
 		
 	};
 	HAL_Delay(55);

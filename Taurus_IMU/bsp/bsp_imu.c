@@ -15,6 +15,11 @@
 #include "QuaternionEKF.h"
 #include "bsp_dwt.h"
 
+#define BMI088_ACCEL_3G_SEN 0.0008974358974f
+#define BMI088_ACCEL_6G_SEN 0.00179443359375f
+#define gNORM 9.69293118f
+float BMI088_AccelScale = 9.783f / gNORM;
+
 imu_mode_e imu_mode;
 //#define Kp 1.35f    // proportional gain governs rate of convergence to accelerometer/magnetometer
 //#define Ki 0.002f   // integral gain governs rate of convergence of gyroscope biases
@@ -55,12 +60,15 @@ void IMU_Values_Convert(void)
 	
 	time = HAL_GetTick();
 	d_time = time-last_time;
-	imu_real_data.Gyro.X = imu_output_data.Gyro.X/16.384f/57.3f;
-	imu_real_data.Gyro.Y = imu_output_data.Gyro.Y/16.384f/57.3f;
-	imu_real_data.Gyro.Z = imu_output_data.Gyro.Z/16.384f/57.29577951308f; //���ٶȵ�λLSB->rad/s
-	imu_real_data.Accel.X = imu_output_data.Accel.X/1365.0f-Bias.Accel.X;
-	imu_real_data.Accel.Y = imu_output_data.Accel.Y/1365.0f-Bias.Accel.Y;
-	imu_real_data.Accel.Z = imu_output_data.Accel.Z/1365.0f-Bias.Accel.Z; 			//���ٶ�AD->g
+	imu_real_data.Gyro.X = imu_output_data.Gyro.X/16.384f/57.29577951308f; //���ٶȵ�λLSB->rad/sBMI088_AccelScale
+	imu_real_data.Gyro.Y = imu_output_data.Gyro.Y/16.384f/57.29577951308f; //���ٶȵ�λLSB->rad/sBMI088_AccelScale
+	imu_real_data.Gyro.Z = imu_output_data.Gyro.Z/16.384f/57.29577951308f; //���ٶȵ�λLSB->rad/sBMI088_AccelScale
+//	imu_real_data.Accel.X = imu_output_data.Accel.X/1365.0f-Bias.Accel.X;
+//	imu_real_data.Accel.Y = imu_output_data.Accel.Y/1365.0f-Bias.Accel.Y;
+//	imu_real_data.Accel.Z = imu_output_data.Accel.Z/1365.0f-Bias.Accel.Z; 			//���ٶ�AD->g
+	imu_real_data.Accel.X = imu_output_data.Accel.X * BMI088_ACCEL_3G_SEN * BMI088_AccelScale;
+	imu_real_data.Accel.Y = imu_output_data.Accel.Y * BMI088_ACCEL_3G_SEN * BMI088_AccelScale;
+	imu_real_data.Accel.Z = imu_output_data.Accel.Z * BMI088_ACCEL_3G_SEN * BMI088_AccelScale;
 	last_time = time;
 	
 	
@@ -211,7 +219,7 @@ const float yb[3] = {0, 1, 0};
 const float zb[3] = {0, 0, 1};
 
 uint32_t INS_DWT_Count = 0;
-static float dt = 0, t = 0;
+ float dt = 0, t = 0;
 uint8_t ins_debug_mode = 0;
 float RefTemp = 40;
 
@@ -220,14 +228,12 @@ float RefTemp = 40;
 void IMU_AHRS_Calcu_task(void){
 
   
-   
-				const float gravity[3] = {0, 0, 9.7833f};
-				dt = DWT_GetDeltaT(&INS_DWT_Count);
-				
-				t += dt;
-
-
-    
+		
+    const float gravity[3] = {0, 0, 9.7833f};
+		dt = DWT_GetDeltaT(&INS_DWT_Count);
+    t += dt;
+		INS.AccelLPF = 0.0085;
+		
         INS.Accel[X_axis] = imu_real_data.Accel.X;
         INS.Accel[Y_axis] = imu_real_data.Accel.Y;
         INS.Accel[Z_axis] = imu_real_data.Accel.Z;
@@ -253,14 +259,21 @@ void IMU_AHRS_Calcu_task(void){
         BodyFrameToEarthFrame(zb, INS.zn, INS.q);
 
                 // 将重力从导航坐标系n转换到机体系b,随后根据加速度计数据计算运动加速度
-        float gravity_b[3];
+//        float gravity_b[3];
+//        EarthFrameToBodyFrame(gravity, gravity_b, INS.q);
+//        for (uint8_t i = 0; i < 3; i++) // 同样过一个低通滤波
+//        {
+//            INS.MotionAccel_b[i] = INS.Accel[i];
+//        }
+//        BodyFrameToEarthFrame(INS.MotionAccel_b, INS.MotionAccel_n, INS.q); // 转换回导航系n
+					
+		    float gravity_b[3];    
         EarthFrameToBodyFrame(gravity, gravity_b, INS.q);
         for (uint8_t i = 0; i < 3; i++) // 同样过一个低通滤波
         {
             INS.MotionAccel_b[i] = (INS.Accel[i] - gravity_b[i]) * dt / (INS.AccelLPF + dt) + INS.MotionAccel_b[i] * INS.AccelLPF / (INS.AccelLPF + dt);
         }
-        BodyFrameToEarthFrame(INS.MotionAccel_b, INS.MotionAccel_n, INS.q); // 转换回导航系n
-
+				BodyFrameToEarthFrame(INS.MotionAccel_b, INS.MotionAccel_n, INS.q); // 转换回导航系n
                 // 获取最终数据
         INS.Yaw = QEKF_INS.Yaw;
         INS.Pitch = QEKF_INS.Pitch;

@@ -577,9 +577,11 @@ ARM Macro Assembler    Page 9
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
 erwork --depend=taurus_imu\startup_stm32f302x8.d -otaurus_imu\startup_stm32f302
-x8.o -I.\RTE\_Taurus_IMU -IB:\Keil5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include --pr
-edefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 524" --predefin
-e="_RTE_ SETA 1" --list=startup_stm32f302x8.lst startup_stm32f302x8.s
+x8.o -I.\RTE\_Taurus_IMU -IB:\Keil5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include -IB:
+\Keil5\ARM\PACK\Keil\STM32F3xx_DFP\Drivers\CMSIS\Device\ST\STM32F3xx\Include --
+predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 524" --predef
+ine="_RTE_ SETA 1" --predefine="STM32F302x8 SETA 1" --list=startup_stm32f302x8.
+lst startup_stm32f302x8.s
 
 
 
@@ -1355,4 +1357,4 @@ Symbol: __main
       At line 189 in file startup_stm32f302x8.s
 Comment: __main used once
 2 symbols
-413 symbols in table
+414 symbols in table
